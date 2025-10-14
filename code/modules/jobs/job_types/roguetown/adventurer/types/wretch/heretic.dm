@@ -69,6 +69,7 @@
 					beltr = /obj/item/rogueweapon/stoneaxe/woodcut/steel
 			if("Billhook")
 				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
+				l_hand = /obj/item/rogueweapon/scabbard/gwstrap
 				if(HAS_TRAIT(H, TRAIT_PSYDONIAN_GRIT))
 					r_hand = /obj/item/rogueweapon/spear/psyspear/old
 				else
@@ -85,6 +86,7 @@
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/minion_order)
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/gravemark)
 			H.mind.current.faction += "[H.name]_faction"
+			H.verbs += list(/mob/living/carbon/human/proc/zizo_revelations)
 		ADD_TRAIT(H, TRAIT_GRAVEROBBER, TRAIT_GENERIC)
 	mask = /obj/item/clothing/mask/rogue/facemask/steel
 	neck = /obj/item/clothing/neck/roguetown/gorget
@@ -107,6 +109,7 @@
 		if(/datum/patron/inhumen/zizo)
 			H.cmode_music = 'sound/music/combat_heretic.ogg'
 			H.equip_to_slot_or_del(new /obj/item/clothing/head/roguetown/helmet/bascinet/pigface, SLOT_HEAD, TRUE)
+			
 		if(/datum/patron/inhumen/matthios)
 			H.cmode_music = 'sound/music/combat_matthios.ogg'
 			H.equip_to_slot_or_del(new /obj/item/clothing/head/roguetown/helmet/heavy/bucket/gold, SLOT_HEAD, TRUE)
@@ -455,3 +458,68 @@
 	to_chat(target, span_danger("You feel ancient powers lifting divine burdens from your soul..."))
 	
 	return TRUE
+
+/mob/living/carbon/human/proc/zizo_revelations()
+	set name = "Revelations"
+	set category = "Cleric"
+	var/obj/item/grabbing/I = get_active_held_item()
+	var/mob/living/carbon/human/H
+	var/obj/item/S = get_inactive_held_item()
+	var/found = null
+	if(!istype(I) || !ishuman(I.grabbed))
+		to_chat(src, span_warning("I don't have a victim in my hands!"))
+		return
+	H = I.grabbed
+	if(H == src)
+		to_chat(src, span_warning("I already torture myself."))
+		return
+	if (!H.restrained())
+		to_chat(src, span_warning ("My victim needs to be restrained in order to do this!"))
+		return
+	if(!istype(S, /obj/item/clothing/neck/roguetown/psicross/inhumen/aalloy))
+		to_chat(src, span_warning("I need to be holding a zcross to extract this divination!"))
+		return
+	for(var/obj/structure/fluff/psycross/zizocross/N in oview(5, src))
+		found = N
+	if(!found)
+		to_chat(src, span_warning("I need a large profane shrine structure nearby to extract this divination!"))	
+		return
+	if(!H.stat)
+		var/static/list/revelations_initiative = list(
+			"ZIZO, ZIZO, TEST THEIR LUX!",
+			"ZIZO, ZIZO, REVEAL THE TRUTH!",
+			"ZIZO, ZIZO, LET REALITY SET THEM FREE!",
+		)
+		src.visible_message(span_warning("[src] shoves the zcross in [H]'s LUX!"))
+		say(pick(revelations_initiative), spans = list("torture"))
+		H.emote("agony", forced = TRUE)
+
+		if(!(do_mob(src, H, 10 SECONDS)))
+			return
+		src.visible_message(span_warning("[src]'s zcross abruptly catches flame, you swear you saw it smile before it ashed away."))
+		H.confess_sins("patron")
+		qdel(S)
+		return
+	to_chat(src, span_warning("This one is not in a ready state to be questioned..."))
+
+/mob/living/carbon/human/proc/confess_sins_z(confession_type = "antag")
+	var/static/list/innocent_lines = list(
+		"I AM NO SINNER!",
+		"I'M INNOCENT!",
+		"I HAVE NOTHING TO CONFESS!",
+		"I AM FAITHFUL!",
+	)
+	var/list/confessions = list()
+	switch(confession_type)
+		if("patron")
+			if(length(patron?.confess_lines))
+				confessions += patron.confess_lines
+		if("antag")
+			for(var/datum/antagonist/antag in mind?.antag_datums)
+				if(!length(antag.confess_lines))
+					continue
+				confessions += antag.confess_lines
+	if(length(confessions))
+		say(pick(confessions), spans = list("torture"))
+		return
+	say(pick(innocent_lines), spans = list("torture"))
