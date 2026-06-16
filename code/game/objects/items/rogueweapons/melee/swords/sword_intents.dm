@@ -103,6 +103,8 @@
 	penfactor = PEN_LIGHT
 	damfactor = 0.8
 	clickcd = CLICK_CD_QUICK
+	candodge = TRUE
+	canparry = TRUE
 	swingdelay = 0
 	swingdelay_type = SWINGDELAY_NORMAL
 
