@@ -2,7 +2,7 @@
 	name = "Disgraced Knight"
 	tutorial = "You were once a venerated and revered knight - now, a traitor who abandoned your liege. You lyve the lyfe of an outlaw, shunned and looked down upon by society."
 	allowed_sexes = list(MALE, FEMALE)
-	
+
 	outfit = /datum/outfit/job/roguetown/wretch/deserter
 	class_select_category = CLASS_CAT_WARRIOR
 	category_tags = list(CTAG_WRETCH)
@@ -120,6 +120,7 @@
 			"Visored Sallet"			= /obj/item/clothing/head/roguetown/helmet/sallet/visored,
 			"Armet"				= /obj/item/clothing/head/roguetown/helmet/heavy/knight/armet,
 			"Hounskull Bascinet" 		= /obj/item/clothing/head/roguetown/helmet/bascinet/pigface/hounskull,
+			"Roundface Bascinet" 		= /obj/item/clothing/head/roguetown/helmet/bascinet/pigface/roundface,
 			"Etruscan Bascinet" 		= /obj/item/clothing/head/roguetown/helmet/bascinet/etruscan,
 			"Slitted Kettle"		= /obj/item/clothing/head/roguetown/helmet/heavy/knight/skettle,
 			"Kulah Khud"	= /obj/item/clothing/head/roguetown/helmet/sallet/raneshen,
